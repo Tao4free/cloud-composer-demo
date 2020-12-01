@@ -24,20 +24,22 @@ dag = DAG(
     catchup=False) 
 
 # Functions used for tasks
-def write_file_func(**context):
+def write_file_func(**kwargs):
     execution_date = context['execution_date']
     dag_id = context['dag'].dag_id
     task_id = context['task'].task_id
-    filename = "_".join([dag_id, task_id, execution_date])
-    global filepath
-    filepath = '/home/airflow/gcs/data/{}.json'.format(now)
+    filename = "_".join([dag_id, task_id, execution_date]) + ".json"
+    filepath = '/home/airflow/gcs/data/{}'.format(now)
     with open(filepath, 'w') as f:
         f.write(json.dumps('{"name":"demo-luzhuzhu", "age":"1"}'))
+    return [filename, filepath]
 
-def upload_file_func():
+def upload_file_func(**kwargs):
+    ti = kwargs['ti']
+    filename, fielpath = ti.xcom_pull(task_ids='create_file')
     conn = GoogleCloudStorageHook()
-    target_bucket = 'composer_wills'
-    target_object = 'test.json'
+    target_bucket = os.getenv["UPLOAD_GCS_BUCKET_NAME"]
+    target_object = filename
     conn.upload(target_bucket, target_object, filepath)
 
 # Create tasks
