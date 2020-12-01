@@ -1,10 +1,6 @@
 import datetime
-import logging
-
 import airflow
 from airflow.operators import bash_operator
-import subprocess
-
 
 default_args = {
     'owner': 'Composer Example',

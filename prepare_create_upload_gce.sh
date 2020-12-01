@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
+source config.sh
 
-if [[ $# -eq 0 ]] ; then
-    echo 'Need parameters: GCS bucket name, composer environment name。'
-    exit 0
-fi
+gsutil mb gs://${UPLOAD_GCS_BUCKET_NAME}
+gcloud composer environments update ${COMPOSER_ENV_NAME} \
+    --location ${LOCATION} \
+    --update-pypi-packages-from-file requirements.txt || true
 
-bucket_name="$1"
-composer_env_name="$2"
-gsutil mb gs://$bucket_name
-gcloud composer environments update $composer_env_name \
-    --update-pypi-packages-from-file requirements.txt
-    --location asia-northeast1 \
-    --update-env-variables=UPLOAD_GCS_BUCKET_NAME=$bucket_name || true
+gcloud composer environments update ${COMPOSER_ENV_NAME} \
+    --location ${LOCATION} \
+    --update-env-variables=UPLOAD_GCS_BUCKET_NAME=${UPLOAD_GCS_BUCKET_NAME} || true
 
 gcloud composer environments storage dags import \
-  --environment $composer_env_name \
-  --location asia-northeast1 \
+  --environment ${COMPOSER_ENV_NAME} \
+  --location ${LOCATION} \
   --source create_upload_gcs.py

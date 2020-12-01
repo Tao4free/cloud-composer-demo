@@ -1,1 +1,0 @@
-gcloud composer environments describe test-composer --location asia-northeast1 | grep airflowUri
