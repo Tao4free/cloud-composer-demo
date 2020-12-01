@@ -9,6 +9,7 @@ bucket_name="$1"
 composer_env_name="$2"
 gsutil mb gs://$bucket_name
 gcloud composer environments update $composer_env_name \
+    --update-pypi-packages-from-file requirements.txt
     --location asia-northeast1 \
     --update-env-variables=UPLOAD_GCS_BUCKET_NAME=$bucket_name || true
 

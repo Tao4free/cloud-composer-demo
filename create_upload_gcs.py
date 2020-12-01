@@ -3,10 +3,11 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.utils.dates import days_ago
 from datetime import datetime, timedelta, timezone
+import os
 import json
 
 # Generate timezone
-JST = timezone(timedelta(hours=+9), 'JST')
+local_tz = pendulum.timezone("Asia/Tokyo")
 
 # Default arguments
 default_args = {
@@ -25,11 +26,10 @@ dag = DAG(
 
 # Functions used for tasks
 def write_file_func(**context):
-    execution_date = context['execution_date']
-    dag_id = context['dag'].dag_id
     task_id = context['task'].task_id
-    filename = "_".join([dag_id, task_id, execution_date]) + ".json"
-    filepath = '/home/airflow/gcs/data/{}'.format(now)
+    execution_date = local_tz.convert(context['execution_date']).strftime('%Y-%m-%d_%H:%M:%S')
+    filename = '_'.join([task_id, execution_date]) + '.json'
+    filepath = '/home/airflow/gcs/data/{}'.format(filename)
     with open(filepath, 'w') as f:
         f.write(json.dumps('{"name":"demo-luzhuzhu", "age":"1"}'))
     return [filename, filepath]
@@ -37,7 +37,7 @@ def write_file_func(**context):
 def upload_file_func(**context):
     filename, fielpath = context['task_instance'].xcom_pull(task_ids='create_file')
     conn = GoogleCloudStorageHook()
-    target_bucket = os.getenv["UPLOAD_GCS_BUCKET_NAME"]
+    target_bucket = os.getenv['UPLOAD_GCS_BUCKET_NAME']
     target_object = filename
     conn.upload(target_bucket, target_object, filepath)
 
