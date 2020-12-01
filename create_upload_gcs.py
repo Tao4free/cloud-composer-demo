@@ -14,7 +14,7 @@ local_tz = pendulum.timezone("Asia/Tokyo")
 default_args = {
     'start_date': days_ago(0),
     'retries': 1,
-    'retry_delay': timedelta(seconds=30),
+    'retry_delay': timedelta(seconds=10),
     'wait_for_downstream': True,
 }
 

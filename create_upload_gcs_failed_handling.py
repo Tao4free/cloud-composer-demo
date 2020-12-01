@@ -1,4 +1,5 @@
 from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.utils.dates import days_ago
@@ -14,8 +15,8 @@ local_tz = pendulum.timezone("Asia/Tokyo")
 default_args = {
     'start_date': days_ago(0),
     'retries': 1,
-    'retry_delay': timedelta(seconds=30),
-    'wait_for_downstream': True,
+    'retry_delay': timedelta(seconds=10),
+
 }
 
 # Instantiate a DAG
@@ -38,13 +39,14 @@ def write_file_func(**context):
 
 def upload_file_func(**context):
     filename, filepath = context['task_instance'].xcom_pull(task_ids='create_file')
+    # context['ti'].xcom_push(key='value from copy file', value=[filename, filepath])
     conn = GoogleCloudStorageHook()
     target_bucket = None
     target_object = 'uploaded/' + filename
     conn.upload(target_bucket, target_object, filepath)
 
 def move_error_file_func(**context):
-    filename, filepath = context['task_instance'].xcom_pull(task_ids='create_file')
+    filename, filepath = context['ti'].xcom_pull(task_ids='create_file')
     conn = GoogleCloudStorageHook()
     target_bucket = os.getenv('UPLOAD_GCS_BUCKET_NAME')
     target_object = 'moved/' + filename
@@ -58,11 +60,10 @@ create_failed_command="gcloud logging write airflow_create_file_task_failed \
 # Create tasks
 create_file	= PythonOperator(task_id='create_file', python_callable=write_file_func, dag=dag, provide_context=True)
 create_failed_handler =BashOperator(
-    task_id="error_copy",
+    task_id="create_failed_handler",
     bash_command=create_failed_command,
     dag=dag,
     trigger_rule='one_failed')
-copy_file = PythonOperator(task_id='copy_file', python_callable=upload_file_func, dag=dag, provide_context=True)
 copy_file = PythonOperator(task_id='copy_file', python_callable=upload_file_func, dag=dag, provide_context=True)
 copy_failed_handler = PythonOperator(
         task_id="copy_failed_handler",
@@ -72,4 +73,5 @@ copy_failed_handler = PythonOperator(
         trigger_rule='one_failed')
 
 # Decide the task dependencies
-create_file >> [copy_file >> copy_failed_handler, create_failed_handler]
+create_file >> [copy_file, create_failed_handler]
+copy_file >> copy_failed_handler
