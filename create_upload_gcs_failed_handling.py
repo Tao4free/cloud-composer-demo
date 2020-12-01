@@ -1,4 +1,5 @@
 from airflow import DAG
+from airflow import AirflowException
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
@@ -38,12 +39,12 @@ def write_file_func(**context):
     return [filename, filepath]
 
 def upload_file_func(**context):
-    filename, filepath = context['task_instance'].xcom_pull(task_ids='create_file')
-    # context['ti'].xcom_push(key='value from copy file', value=[filename, filepath])
-    conn = GoogleCloudStorageHook()
-    target_bucket = None
-    target_object = 'uploaded/' + filename
-    conn.upload(target_bucket, target_object, filepath)
+    raise AirflowException
+    # filename, filepath = context['task_instance'].xcom_pull(task_ids='create_file')
+    # conn = GoogleCloudStorageHook()
+    # target_bucket = None
+    # target_object = 'uploaded/' + filename
+    # conn.upload(target_bucket, target_object, filepath)
 
 def move_error_file_func(**context):
     filename, filepath = context['ti'].xcom_pull(task_ids='create_file')
@@ -58,13 +59,24 @@ create_failed_command="gcloud logging write airflow_create_file_task_failed \
      --payload-type=json  --severity=ERROR"
 
 # Create tasks
-create_file	= PythonOperator(task_id='create_file', python_callable=write_file_func, dag=dag, provide_context=True)
+create_file	= PythonOperator(
+        task_id='create_file',
+        python_callable=write_file_func,
+        dag=dag,
+        provide_context=True)
+
 create_failed_handler =BashOperator(
     task_id="create_failed_handler",
     bash_command=create_failed_command,
     dag=dag,
     trigger_rule='one_failed')
-copy_file = PythonOperator(task_id='copy_file', python_callable=upload_file_func, dag=dag, provide_context=True)
+
+copy_file = PythonOperator(
+        task_id='copy_file',
+        python_callable=upload_file_func,
+        dag=dag,
+        provide_context=True)
+
 copy_failed_handler = PythonOperator(
         task_id="copy_failed_handler",
         python_callable=move_error_file_func,
