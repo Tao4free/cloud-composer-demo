@@ -1,0 +1,1 @@
+gsutil cp test_create_upload_gcs.py gs://asia-northeast1-test-compos-f35799b3-bucket/dags/

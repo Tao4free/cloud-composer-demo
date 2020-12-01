@@ -1,0 +1,1 @@
+python3 get_client_id.py ca-lutao-test asia-northeast1 test-composer
