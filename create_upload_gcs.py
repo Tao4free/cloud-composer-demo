@@ -24,7 +24,7 @@ dag = DAG(
     catchup=False) 
 
 # Functions used for tasks
-def write_file_func(**kwargs):
+def write_file_func(**context):
     execution_date = context['execution_date']
     dag_id = context['dag'].dag_id
     task_id = context['task'].task_id
@@ -34,9 +34,8 @@ def write_file_func(**kwargs):
         f.write(json.dumps('{"name":"demo-luzhuzhu", "age":"1"}'))
     return [filename, filepath]
 
-def upload_file_func(**kwargs):
-    ti = kwargs['ti']
-    filename, fielpath = ti.xcom_pull(task_ids='create_file')
+def upload_file_func(**context):
+    filename, fielpath = context['task_instance'].xcom_pull(task_ids='create_file')
     conn = GoogleCloudStorageHook()
     target_bucket = os.getenv["UPLOAD_GCS_BUCKET_NAME"]
     target_object = filename
