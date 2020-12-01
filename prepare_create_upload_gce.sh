@@ -6,6 +6,7 @@ if [[ $# -eq 0 ]] ; then
 fi
 
 bucket_name="$1"
+composer_env_name="$2"
 gsutil mb gs://$bucket_name
-gcloud composer environments update wills-composer-demo \
+gcloud composer environments update $composer_env_name \
     --update-env-variables=[UPLOAD_GCS_BUCKET_NAME=$bucket_name]
