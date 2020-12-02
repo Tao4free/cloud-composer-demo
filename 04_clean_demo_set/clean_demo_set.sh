@@ -9,5 +9,5 @@ gcloud composer environments delete ${COMPOSER_ENV_NAME} --location ${LOCATION} 
 
 gcloud functions delete gcs-dag-trigger-function --quiet
 
-gsutil rb  ${composer_gcs_path}
-gsutil rb  gs://${UPLOAD_GCS_BUCKET_NAME}
+gsutil rm -r  ${composer_gcs_path}
+gsutil rm -r  gs://${UPLOAD_GCS_BUCKET_NAME}
