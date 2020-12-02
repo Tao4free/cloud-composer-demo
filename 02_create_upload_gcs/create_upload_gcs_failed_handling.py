@@ -40,11 +40,6 @@ def write_file_func(**context):
 
 def upload_file_func(**context):
     raise AirflowException
-    # filename, filepath = context['task_instance'].xcom_pull(task_ids='create_file')
-    # conn = GoogleCloudStorageHook()
-    # target_bucket = None
-    # target_object = 'uploaded/' + filename
-    # conn.upload(target_bucket, target_object, filepath)
 
 def move_error_file_func(**context):
     filename, filepath = context['ti'].xcom_pull(task_ids='create_file')

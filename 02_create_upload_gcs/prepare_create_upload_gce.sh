@@ -2,6 +2,7 @@
 source ../config.sh
 
 gsutil mb gs://${UPLOAD_GCS_BUCKET_NAME}
+
 gcloud composer environments update ${COMPOSER_ENV_NAME} \
     --location ${LOCATION} \
     --update-pypi-packages-from-file requirements.txt || true
