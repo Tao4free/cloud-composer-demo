@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.utils.dates import days_ago
-from datetime import timezone
+from datetime import timedelta
 import os
 import json
 import pendulum

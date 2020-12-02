@@ -17,7 +17,6 @@ default_args = {
     'start_date': days_ago(0),
     'retries': 1,
     'retry_delay': timedelta(seconds=10),
-
 }
 
 # Instantiate a DAG
