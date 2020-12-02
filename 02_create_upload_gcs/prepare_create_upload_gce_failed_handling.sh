@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source config.sh
+source ../config.sh
 
 gcloud composer environments storage dags import \
   --environment ${COMPOSER_ENV_NAME} \

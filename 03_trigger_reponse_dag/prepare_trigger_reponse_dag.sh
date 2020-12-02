@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source config.sh
+source ../config.sh
 
 webserver_res=`gcloud composer environments describe ${COMPOSER_ENV_NAME} --location ${LOCATION} | grep airflowUri`
 webserver_id=${webserver_res##*' '}

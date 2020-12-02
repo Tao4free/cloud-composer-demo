@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source config.sh
+source ../config.sh
 
 gsutil mb gs://${UPLOAD_GCS_BUCKET_NAME}
 gcloud composer environments update ${COMPOSER_ENV_NAME} \
