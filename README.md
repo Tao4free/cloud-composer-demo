@@ -20,7 +20,12 @@ cloud-composer-demo
 │   └── clean_demo_set.sh
 ├── LICENSE
 ├── README.md
-└── config.sh
+├── config.sh
+├── config_local.sh
+└── images
+    ├── create_upload_gcs.png
+    ├── create_upload_gcs_failed_handling.png
+    └── trigger_reponse_dag.png
 ```
 
 # Instructions
