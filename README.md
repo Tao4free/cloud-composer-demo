@@ -37,6 +37,7 @@ cd ../
 Workflow:
 Create json file and upload to google cloud storage, every minute.
 The file name is based on excution datetime.
+
 ![create upload gcs](images/create_upload_gcs.png)
 
 ```bash
@@ -49,6 +50,7 @@ cd ../
 Workflow:
 Create json file, if succeeded then upload to gcs, if failed send log to Cloud Logging.
 If upload to gcs failed then move the file to another gcs path.
+
 ![create upload gcs failed handling](images/create_upload_gcs_failed_handling.png)
 
 ```bash
@@ -61,6 +63,7 @@ cd ../
 Workflow:
 When the files are uploaded to gcs, then trigger anthoer DAG to print gcs info.
 Cloud Functions will be used for sensing gcs and triggering DAG
+
 ![trigger reponse dag](images/trigger_reponse_dag.png)
 
 ```bash
