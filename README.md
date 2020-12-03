@@ -61,3 +61,5 @@ bash clean_demo_set.sh
 cd ../
 ```
 
+# More dags examples
+https://github.com/apache/airflow/tree/master/airflow/example_dags
