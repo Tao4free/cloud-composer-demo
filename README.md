@@ -54,4 +54,10 @@ bash prepare_trigger_reponse_dag.sh
 cd ../
 ```
 
+## Clean composer demo set resource
+```bash
+cd 04_clean_demo_set
+bash clean_demo_set.sh
+cd ../
+```
 
