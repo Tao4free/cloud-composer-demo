@@ -1,7 +1,7 @@
 # cloud-composer-demo
 
 # Source Tree
-```
+```bash
 cloud-composer-demo
 ├── 01_create_composer_environment
 │   └── prepare_composer_environment.sh
@@ -35,7 +35,7 @@ This demo use the **cloud shell** to show how composer works.
 You have to modify the config's parameter for your environment.
 `xxx` need to be modified.
 
-```
+```bash
 PROJECT_ID=xxx
 LOCATION=asia-northeast1
 ZONE=asia-northeast1-b
